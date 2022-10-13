@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
+import { Routes, Route, Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import authOperations from 'redux/auth/auth-operations';
 import { getFetchingCurrentUser } from '../../redux/auth/auth-selectors';
 import { lazy, Suspense } from 'react';
-import { Routes, Route, Navigate } from "react-router-dom";
 import PrivateRoute from 'components/PrivateRoute/PrivateRoute';
 import PublicRoute from '../../components/PublicRoute/PublicRoute';
 import { Container } from './App.styled';
@@ -20,8 +20,8 @@ function App() {
 
   const Layout = lazy(() => import('../Layout'));
   const HomeView = lazy(() => import('../../views/HomeView'));
-  const ContactsView = lazy(() => import('../../views/ContactsView'));
-  const RegisterView = lazy(() => import('../../views/RegisterView'));
+  const ContactsView = lazy(() => import('../../views/ContactsViews'));
+  const RegisterView = lazy(() => import('../../views/RegisterViews'));
   const LoginView = lazy(() => import('../../views/LoginView'));  
 
 

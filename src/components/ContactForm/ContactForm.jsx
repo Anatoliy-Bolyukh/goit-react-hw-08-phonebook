@@ -11,7 +11,7 @@ import {
   ButtonStyled,
   InputStyled,
   ErrorText,
-} from './ContactForm.styled';
+} from './ContactsForm.styled';
 
 
 function ContactForm() {

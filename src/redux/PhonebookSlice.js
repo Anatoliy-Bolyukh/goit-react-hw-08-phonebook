@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import * as contactsApi from 'services/contacts-api';
+import * as contactsApi from '../service/contactsApi';
 
 
 
