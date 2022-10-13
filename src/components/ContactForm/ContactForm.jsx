@@ -1,66 +1,83 @@
-import { useState } from 'react';
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { getItems } from 'redux/selectors';
+import { addContact } from 'redux/PhonebookSlice';
+import { Formik, ErrorMessage } from 'formik';
+import * as yup from 'yup';
+import { Toaster, toast } from 'react-hot-toast';
+import {
+  FormBoxStyled,
+  LabelStyled,
+  ButtonStyled,
+  InputStyled,
+  ErrorText,
+} from './ContactForm.styled';
 
-export default function ContactForm({ handleSubmit }) {
-  const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
 
-  const handleChange = event => {
-    const { name, value } = event.target;
-    switch (name) {
-      case 'name':
-        setName(value);
-        break;
+function ContactForm() {
+  const contacts = useSelector(getItems);
+  const dispatch = useDispatch();
+ 
 
-      case 'number':
-        setNumber(value);
-        break;
 
-      default:
-        return;
-    }
+  const handleSubmit = (values, { resetForm }) => {
+    const {name, number} = values
+    
+    contacts.find(contact => contact.name.toLowerCase() === values.name.toLowerCase())
+      ? toast.error(`${values.name} is already in contacts`)
+      : dispatch(addContact({ name, number }))
+    
+    resetForm();
   };
 
-  const onHendleSubmit = event => {
-    handleSubmit(event);
-    reset();
-  };
-
-  const reset = () => {
-    setName('');
-    setNumber('');
-  };
+  const schema = yup.object().shape({
+    name: yup.string().required(),
+    number: yup.string().required(),
+  });
 
   return (
-    <div>
-      <form onSubmit={onHendleSubmit}>
-        <label>
-          Імя{' '}
-          <input
-            type="text"
-            value={name}
+    <>
+      <Toaster position="top-center" />
+      <Formik
+        initialValues={{ name: '', number: '' }}
+        validationSchema={schema}
+        onSubmit={handleSubmit}
+      >
+        <FormBoxStyled autoComplete="off">
+          <LabelStyled>
+            Name
+            <InputStyled
+              type="text"
+              name="name"
+              pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+              title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
+              required
+            />
+          </LabelStyled>
+          <ErrorMessage
             name="name"
-            onChange={handleChange}
-            pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-            title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-            required
+            render={message => <ErrorText>{message}</ErrorText>}
           />
-        </label>
 
-        <label>
-          Номер{' '}
-          <input
-            type="tel"
-            value={number}
+          <LabelStyled>
+            Number
+            <InputStyled
+              type="tel"
+              name="number"
+              pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
+              title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
+              required
+            />
+          </LabelStyled>
+          <ErrorMessage
             name="number"
-            onChange={handleChange}
-            pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-            title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-            required
+            render={message => <ErrorText>{message}</ErrorText>}
           />
-        </label>
-
-        <button type="submit">Add contact</button>
-      </form>
-    </div>
+          <ButtonStyled type="submit">Add contact</ButtonStyled>
+        </FormBoxStyled>
+      </Formik>
+    </>
   );
 }
+
+export default ContactForm;
